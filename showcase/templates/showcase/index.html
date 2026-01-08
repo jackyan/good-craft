@@ -1,0 +1,99 @@
+{% load static %}
+{% load showcase_tags %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学员优秀作品展示</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'showcase/css/style.css' %}">
+</head>
+
+<body>
+    <!-- 头部英雄区 -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>🏆 学员优秀作品展示</h1>
+            <p>探索人工智能时代的创意无限可能</p>
+        </div>
+    </header>
+
+    <!-- Tab导航 -->
+    <div class="tabs-container">
+        <div class="tabs">
+            {% for cat in categories %}
+            <button class="tab-btn {% if forloop.first %}active{% endif %}" data-tab="tab-{{ cat.key }}">
+                <span>{{ cat.name }}</span>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 作品展示区 -->
+    <div class="works-container">
+        {% for cat in categories %}
+        <div id="tab-{{ cat.key }}" class="tab-content {% if forloop.first %}active{% endif %}">
+            {% if works_by_category|get_item:cat.key %}
+            <div class="works-grid">
+                {% for work in works_by_category|get_item:cat.key %}
+                <div class="work-card" data-work-id="{{ work.id }}" data-title="{{ work.title }}"
+                    data-student="{{ work.student_name }}" data-type="{{ work.work_type }}"
+                    data-type-display="{{ work.get_work_type_display }}" data-category="{{ work.get_category_display }}"
+                    data-description="{{ work.description }}" data-cover="{{ work.cover_image.url }}"
+                    data-media="{% if work.media_file %}{{ work.media_file.url }}{% endif %}"
+                    data-url="{{ work.content_url }}">
+                    <img src="{{ work.cover_image.url }}" alt="{{ work.title }}" class="work-cover">
+                    <div class="work-info">
+                        <span class="work-type-badge">{{ work.get_type_display_icon }} {{ work.get_work_type_display }}</span>
+                        <h3 class="work-title">{{ work.title }}</h3>
+                        <p class="work-student">{{ work.student_name }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h3>暂无作品</h3>
+                <p>敬请期待更多精彩作品</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 作品详情模态框 -->
+    <div id="workModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="modalMediaContainer"></div>
+            <div class="modal-info">
+                <h2 id="modalTitle" class="modal-title"></h2>
+                <div class="modal-meta">
+                    <div class="modal-meta-item">
+                        <span>👤</span>
+                        <span id="modalStudent"></span>
+                    </div>
+                    <div class="modal-meta-item">
+                        <span>📂</span>
+                        <span id="modalCategory"></span>
+                    </div>
+                    <div class="modal-meta-item">
+                        <span>📄</span>
+                        <span id="modalType"></span>
+                    </div>
+                </div>
+                <p id="modalDescription" class="modal-description"></p>
+                <a id="modalLinkBtn" href="#" target="_blank" class="modal-link">🔗 访问作品链接</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'showcase/js/main.js' %}"></script>
+</body>
+
+</html>
